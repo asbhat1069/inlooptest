@@ -1,6 +1,7 @@
 'use strict';
-var employee = require("../pagesAndFunctions/employeeFunctions.js");
-var employeeData = require("./employeeData.js");
+var using           = require("jasmine-data-provider");
+var employee        = require("../pagesAndFunctions/employeeFunctions.js");
+var employeeData    = require("./employeeData.js");
 
 describe("Demo tests", function(){
     
@@ -15,20 +16,29 @@ describe("Demo tests", function(){
         employee.logout();
     });
 
-    it("Create new employee and verify addition",function(){
-        employee.createEmployee("Abhi2", "Testing2", "2018-01-01", "a@b.com").then(()=>{
-            employee.verifyEmployeePresent("Abhi2 Testing2");
+
+    using(employeeData.employeeDetails, (employeeDetail)=>{
+        var editedEmployeeDetails   =  {    "firstName" : employeeDetail["firstName"]+"-edited", 
+                                            "lastName"  : employeeDetail["lastName"]+"-edited", 
+                                            "startDate" : employeeDetail["startDate"], 
+                                            "email"     : "editedemail@email.com"
+                                        }
+        it("Create new employee "+employeeDetail["firstName"]+" and verify addition",function(){
+            employee.createEmployee(employeeDetail).then(()=>{
+                employee.verifyEmployeePresent(employeeDetail["firstName"]+" "+employeeDetail["lastName"]);
+            });
+        });
+
+        it("Edit employee "+employeeDetail["firstName"]+" and verify edit",function(){
+            employee.editEmployee(employeeDetail["firstName"], editedEmployeeDetails).then(()=>{
+                employee.verifyEmployeeEdited(editedEmployeeDetails);
+            });
+        });
+
+        it("Delete employee "+editedEmployeeDetails["firstName"]+" and verify deletion",function(){
+            employee.deleteEmployee(editedEmployeeDetails["firstName"]+" "+editedEmployeeDetails["lastName"]).then(()=>{
+                employee.verifyEmployeeNotPresent(editedEmployeeDetails["firstName"]+" "+editedEmployeeDetails["lastName"]);
+            });
         });
     });
-
-    it("Edit employee and verify edit",function(){
-        employee.editEmployee("Abhi2 Testing2", {"firstName": "Abhi-edited", "lastName":"Edited lastname", "startDate":"2017-01-01", "email":"edited@edited.com"}).then(()=>{
-            employee.verifyEmployeePresent("Abhi-edited Edited lastname");
-        });
-    });
-
-    it("Delete employee and verify deletion",function(){
-        employee.deleteEmployee("Abhi-edited Edited lastname");
-    });
-
 });
