@@ -12,6 +12,7 @@
   "author": "abhishek bhat",
   "license": "ISC",
   "devDependencies": {
+    "jasmine-data-provider": "^2.2.0",
     "protractor-jasmine2-screenshot-reporter": "^0.5.0"
   }
 }
